@@ -1,0 +1,36 @@
+{
+    "testId": "47d9ee3c-f23c-402f-b24a-2ae9cd88f075",
+    "name": "Label Printouts",
+    "version": "1.0.0",
+    "manifestVersion": 2,
+ 
+    "requirements": {
+      
+        "apps": [
+            {
+                "name": "Express",
+                "apiVersion": 1
+                
+           
+            }
+      
+        ],
+       
+        "renditionPreview":true, 
+         "experimentalApis":true
+    
+    },
+    "entryPoints": [
+        {
+            "type": "panel",
+            "id": "panel1",
+            "main": "index.html",
+        
+            "permissions": {
+                "sandbox": ["allow-popups-to-escape-sandbox", "allow-popups", "allow-downloads"] 
+            }
+        }
+    ]
+ 
+}
+

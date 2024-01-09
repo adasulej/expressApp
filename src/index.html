@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Adobe Add-on SDK Example</title>
+
+  <style>
+    #image-container {
+
+      display: grid;
+
+      grid-template-columns: repeat(4, 1fr);
+      /* 4 columns with equal width */
+
+      grid-gap: 4px;
+
+      max-width: 100%;
+      /* Adjust as needed */
+
+      margin: auto;
+
+    }
+
+    #image-container img {
+
+      max-height: 60px;
+      /* Maximum height for images */
+
+      max-width: 100%;
+      /* Ensure image does not exceed cell width */
+
+      width: auto;
+      /* Maintain aspect ratio */
+
+      height: auto;
+      /* Maintain aspect ratio */
+
+      object-fit: contain;
+      /* Ensures the image is fully visible */
+
+      object-position: center;
+      /* Center the image within the cell */
+
+      display: block;
+      /* Remove inline element spacing */
+
+      margin: auto;
+      /* Center image horizontally */
+
+    }
+
+    .grid-cell {
+
+      height: 60px;
+      /* Fixed height for grid cells */
+
+      display: flex;
+      /* Use flexbox for vertical alignment */
+
+      align-items: center;
+      /* Center image vertically */
+
+      justify-content: center;
+      /* Center image horizontally */
+
+
+      border-radius: 2px;
+      /* 2px border radius */
+
+      padding: 2px;
+      /* Padding of 2px on all sides */
+
+    }
+  </style>
+</head>
+
+<body>
+  <sp-theme theme="express" color="light" scale="medium" dir="ltr">
+    <div>
+      <div id="firstPage" style="margin: 24px;">
+
+        <sp-alert-dialog variant="warning">
+          <h2 slot="heading">Finish designing</h2>
+          Ensure you finish designing your label(s) before continuing.
+          <sp-button slot="button" id="continue" style="width: 100%;" size="m"
+            onclick="this.dispatchEvent(new Event('close', { bubbles: true, composed: true }));">
+            Continue
+          </sp-button>
+        </sp-alert-dialog>
+        <!-- <div class="spectrum-InLineAlert spectrum-InLineAlert--info">
+          <div class="spectrum-InLineAlert-header">
+            Finish designing.
+            <svg class="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false"
+              aria-hidden="true">
+              <use xlink:href="#spectrum-icon-18-Info" />
+            </svg>
+          </div>
+          <div class="spectrum-InLineAlert-content"> Ensure you finish designing your label(s) before continuing.</div>
+        </div>
+        <sp-button style="width: 100%;margin-top: 24px;" id="continue" size="m"
+          onclick="this.dispatchEvent(new Event('close', { bubbles: true, composed: true }));">
+          Continue
+        </sp-button> -->
+      </div>
+      <div id="secondPage" style="display: none;">
+        <!-- TODO -->
+      </div>
+      <div id="thirdPage" style="display: none;margin: 24px;">
+        <p class="spectrum-Body spectrum-Heading--sizeS"><strong>Select the label design page or pages that you want to
+            print out</strong></p>
+        <sp-button id="choosePages" size="m" style="width: 100%; margin-top: 24px;">Choose page(s)</sp-button>
+
+
+
+      </div>
+      <div id="fourthPage" style="display: none;margin: 24px;">
+        <p class="spectrum-Body spectrum-Heading--sizeS"><strong>Select the label design page or pages that you want to
+                print out</strong></p>
+    
+        <div style="display: flex; flex-direction: row;">
+            <sp-radio-group id="rangeSelect" name="example" horizontal>
+                <sp-radio emphasized value="entireDocument">Entire Document</sp-radio>
+                <sp-radio emphasized value="currentPage">Current Page</sp-radio>
+            </sp-radio-group>
+        </div>
+        <sp-picker label="Page selection" value="entireDocument" id="rangeSelect" style="width: 100%;">
+          <sp-menu-item value="entireDocument">Entire Document</sp-menu-item>
+          <sp-menu-item value="currentPage">Current Page</sp-menu-item>
+        </sp-picker>
+        <sp-picker label="File format" value="entireDocument" id="exportType" style="width: 100%;">
+          
+          <sp-menu-item value="pngFormat">PNG (Best for images)</sp-menu-item>
+          <sp-menu-item value="jpgFormat">JPG (Best for small file sizes)</sp-menu-item>
+        </sp-picker>
+        <sp-button size="m" id="export" style="width:100%;margin-top: 24px;">Select</sp-button>
+    </div>
+    
+      <div id="generatePage" style="display:none;margin:24px">
+        <div style="width:100%;">
+
+          <div id="image-container"></div>
+
+        </div>
+        <sp-button size="m" style="margin-top: 24px;width: 100%;" id="generatePrintout">Generate Printout</sp-button>
+        <sp-button size="m" variant="secondary" id="back1" style="margin-top: 8px;width: 100%;">Back</sp-button>
+
+
+      </div>
+    </div>
+  </sp-theme>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+  <script src="https://jspm.dev/@spectrum-web-components/bundle/elements.js" type="module" async></script>
+  <script src="../node_modules/@spectrum-web-components/theme/express/themes.js"></script>
+  <script type="module" src="index.js"></script>
+
+</body>
+
+
+</html>
