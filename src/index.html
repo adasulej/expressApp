@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+  <script type="module" src="index.js"></script>
 
-  <title>Adobe Add-on SDK Example</title>
+  <title>Print your own labels</title>
 
   <style>
     #image-container {
@@ -74,89 +76,241 @@
       /* Padding of 2px on all sides */
 
     }
+
+    .processing {
+      margin: 24px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center
+    }
   </style>
 </head>
 
 <body>
+
+
   <sp-theme theme="express" color="light" scale="medium" dir="ltr">
     <div>
+
+      <div class="spectrum-InLineAlert" id="alertBox" style="display: none;margin-bottom: 8px;margin:24px">
+        <div class="spectrum-InLineAlert-header">
+          <span>
+          </span>
+        </div>
+        <div class="spectrum-InLineAlert-content">
+
+        </div>
+      </div>
+
+
+      <div id="loadingDiv" class="processing">
+        <sp-progress-circle size="L" indeterminate aria-label="Loading..."></sp-progress-circle> 
+        <p style="margin-top: 24px;" class="spectrum-Heading spectrum-Heading--sizeS"><strong></strong></p>
+        <p class="spectrum-Body spectrum-Heading--sizeM"></p>
+      </div>
+      <div id="generatingDiv" class="processing">
+        <sp-progress-circle size="L" indeterminate aria-label="Loading..."></sp-progress-circle>
+        <p style="margin-top: 24px;" class="spectrum-Heading spectrum-Heading--sizeS"><strong></strong></p>
+        <p class="spectrum-Body spectrum-Heading--sizeM"></p>
+      </div>
       <div id="firstPage" style="margin: 24px;">
 
-        <sp-alert-dialog variant="warning">
-          <h2 slot="heading">Finish designing</h2>
-          Ensure you finish designing your label(s) before continuing.
-          <sp-button slot="button" id="continue" style="width: 100%;" size="m"
-            onclick="this.dispatchEvent(new Event('close', { bubbles: true, composed: true }));">
-            Continue
-          </sp-button>
-        </sp-alert-dialog>
-        <!-- <div class="spectrum-InLineAlert spectrum-InLineAlert--info">
+        <div id="infoAlert" class="spectrum-InLineAlert spectrum-InLineAlert--info">
           <div class="spectrum-InLineAlert-header">
-            Finish designing.
-            <svg class="spectrum-Icon spectrum-Icon--sizeM spectrum-InLineAlert-icon" focusable="false"
-              aria-hidden="true">
-              <use xlink:href="#spectrum-icon-18-Info" />
-            </svg>
+
+
+
           </div>
-          <div class="spectrum-InLineAlert-content"> Ensure you finish designing your label(s) before continuing.</div>
+          <div class="spectrum-InLineAlert-content"> </div>
         </div>
-        <sp-button style="width: 100%;margin-top: 24px;" id="continue" size="m"
+        <div style="display: flex;justify-content: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100"
+            zoomAndPan="magnify" viewBox="0 0 108 107.999999" height="144" preserveAspectRatio="xMidYMid meet"
+            version="1.0">
+            <defs>
+              <clipPath id="d1f65a26d1">
+                <path d="M 0 7.558594 L 108 7.558594 L 108 100.378906 L 0 100.378906 Z M 0 7.558594 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="51f0ff38b5">
+                <path
+                  d="M 27.347656 64.796875 L 79.988281 64.796875 L 79.988281 95.375 L 27.347656 95.375 Z M 27.347656 64.796875 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="b1eec9eaf7">
+                <path
+                  d="M 30.886719 65.902344 L 50.632812 65.902344 L 50.632812 72.878906 L 30.886719 72.878906 Z M 30.886719 65.902344 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="fb5ef80237">
+                <path
+                  d="M 30.886719 76.574219 L 50.632812 76.574219 L 50.632812 83.550781 L 30.886719 83.550781 Z M 30.886719 76.574219 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="e39082990f">
+                <path
+                  d="M 30.886719 87.429688 L 50.632812 87.429688 L 50.632812 94.40625 L 30.886719 94.40625 Z M 30.886719 87.429688 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="671b102d5d">
+                <path
+                  d="M 57.367188 65.902344 L 77.113281 65.902344 L 77.113281 72.878906 L 57.367188 72.878906 Z M 57.367188 65.902344 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="d79decbbae">
+                <path
+                  d="M 57.367188 76.574219 L 77.113281 76.574219 L 77.113281 83.550781 L 57.367188 83.550781 Z M 57.367188 76.574219 "
+                  clip-rule="nonzero" />
+              </clipPath>
+              <clipPath id="6f8797775c">
+                <path
+                  d="M 57.367188 87.429688 L 77.113281 87.429688 L 77.113281 94.40625 L 57.367188 94.40625 Z M 57.367188 87.429688 "
+                  clip-rule="nonzero" />
+              </clipPath>
+            </defs>
+            <rect x="-10.8" width="129.6" fill="#ffffff" y="-10.8" height="129.599998" fill-opacity="1" />
+            <rect x="-10.8" width="129.6" fill="#ffffff" y="-10.8" height="129.599998" fill-opacity="1" />
+            <g clip-path="url(#d1f65a26d1)">
+              <path fill="#9b70f1"
+                d="M 34.796875 7.550781 L 83.953125 7.550781 C 84.785156 7.550781 85.449219 8.222656 85.449219 9.046875 L 85.449219 29.078125 L 97.304688 29.078125 C 100.121094 29.078125 102.816406 30.195312 104.808594 32.1875 C 106.796875 34.175781 107.914062 36.871094 107.914062 39.6875 L 107.914062 68.265625 C 107.914062 71.078125 106.796875 73.777344 104.808594 75.765625 C 102.816406 77.753906 100.121094 78.871094 97.304688 78.871094 L 85.449219 78.871094 L 85.449219 99.011719 L 85.445312 99.035156 L 85.445312 99.085938 L 85.4375 99.113281 L 85.4375 99.140625 L 85.40625 99.25 L 85.40625 99.277344 L 85.390625 99.332031 L 85.375 99.359375 L 85.367188 99.382812 L 85.359375 99.410156 L 85.355469 99.4375 L 85.347656 99.460938 L 85.332031 99.484375 L 85.324219 99.511719 L 85.308594 99.539062 L 85.300781 99.5625 L 85.269531 99.609375 L 85.265625 99.628906 L 85.25 99.65625 L 85.234375 99.679688 L 85.21875 99.699219 L 85.1875 99.746094 L 85.175781 99.769531 L 85.160156 99.789062 L 85.144531 99.8125 L 85.128906 99.832031 L 85.105469 99.855469 L 85.089844 99.875 L 85.078125 99.894531 L 85.054688 99.914062 L 85.039062 99.933594 L 85.015625 99.953125 L 85 99.972656 L 84.949219 100.023438 L 84.925781 100.042969 L 84.90625 100.058594 L 84.890625 100.070312 L 84.882812 100.078125 L 84.851562 100.101562 L 84.828125 100.117188 L 84.816406 100.128906 L 84.808594 100.132812 C 84.800781 100.136719 84.800781 100.140625 84.792969 100.144531 L 84.769531 100.15625 C 84.589844 100.277344 84.378906 100.355469 84.15625 100.386719 L 84.140625 100.386719 C 84.140625 100.386719 84.132812 100.386719 84.125 100.390625 L 84.097656 100.390625 L 84.074219 100.394531 L 84.050781 100.394531 L 84.027344 100.398438 C 84.019531 100.398438 84.007812 100.398438 83.992188 100.398438 L 24.050781 100.398438 C 24.042969 100.398438 24.035156 100.398438 24.027344 100.398438 L 23.976562 100.398438 L 23.953125 100.394531 L 23.917969 100.394531 L 23.902344 100.390625 L 23.886719 100.390625 C 23.683594 100.367188 23.488281 100.304688 23.316406 100.207031 L 23.296875 100.195312 L 23.28125 100.1875 L 23.265625 100.175781 L 23.25 100.167969 L 23.234375 100.15625 L 23.21875 100.148438 L 23.207031 100.136719 L 23.136719 100.089844 L 23.125 100.074219 L 23.101562 100.058594 L 23.078125 100.039062 L 23.054688 100.023438 L 23.039062 100.003906 L 23.019531 99.984375 L 22.996094 99.96875 L 22.980469 99.949219 L 22.957031 99.929688 L 22.945312 99.910156 L 22.929688 99.886719 L 22.90625 99.867188 L 22.875 99.828125 L 22.855469 99.804688 L 22.839844 99.78125 L 22.824219 99.761719 L 22.792969 99.714844 L 22.777344 99.695312 L 22.765625 99.671875 L 22.757812 99.648438 L 22.742188 99.625 L 22.726562 99.597656 L 22.710938 99.574219 L 22.703125 99.550781 L 22.6875 99.527344 L 22.679688 99.5 L 22.667969 99.476562 L 22.660156 99.449219 L 22.652344 99.425781 L 22.636719 99.398438 L 22.636719 99.382812 L 22.628906 99.363281 L 22.621094 99.347656 L 22.613281 99.328125 L 22.613281 99.3125 L 22.605469 99.292969 L 22.597656 99.277344 L 22.597656 99.257812 L 22.589844 99.238281 L 22.589844 99.222656 L 22.585938 99.203125 L 22.585938 99.183594 L 22.578125 99.167969 L 22.578125 99.148438 L 22.570312 99.128906 L 22.570312 99.09375 L 22.5625 99.074219 L 22.5625 99.015625 L 22.554688 98.996094 L 22.554688 78.871094 L 10.699219 78.871094 C 7.886719 78.871094 5.191406 77.753906 3.199219 75.765625 C 1.207031 73.777344 0.0898438 71.078125 0.0898438 68.265625 C 0.0898438 60.015625 0.0898438 47.933594 0.0898438 39.6875 C 0.0898438 36.871094 1.207031 34.175781 3.199219 32.1875 C 5.191406 30.195312 7.886719 29.078125 10.699219 29.078125 L 22.554688 29.078125 L 22.554688 19.8125 C 22.554688 19.414062 22.710938 19.035156 22.996094 18.753906 L 33.753906 7.988281 C 33.84375 7.898438 33.941406 7.820312 34.054688 7.757812 C 34.273438 7.628906 34.527344 7.554688 34.796875 7.550781 Z M 82.457031 97.402344 L 82.457031 62.960938 L 25.550781 62.960938 L 25.550781 97.402344 Z M 31.539062 92.910156 L 76.464844 92.910156 C 77.289062 92.910156 77.964844 92.242188 77.964844 91.414062 C 77.964844 90.585938 77.289062 89.917969 76.464844 89.917969 L 31.539062 89.917969 C 30.714844 89.917969 30.042969 90.585938 30.042969 91.414062 C 30.042969 92.242188 30.714844 92.910156 31.539062 92.910156 Z M 31.539062 85.421875 L 76.464844 85.421875 C 77.289062 85.421875 77.964844 84.753906 77.964844 83.925781 C 77.964844 83.097656 77.289062 82.429688 76.464844 82.429688 L 31.539062 82.429688 C 30.714844 82.429688 30.042969 83.097656 30.042969 83.925781 C 30.042969 84.753906 30.714844 85.421875 31.539062 85.421875 Z M 31.539062 77.9375 L 76.464844 77.9375 C 77.289062 77.9375 77.964844 77.265625 77.964844 76.4375 C 77.964844 75.613281 77.289062 74.941406 76.464844 74.941406 L 31.539062 74.941406 C 30.714844 74.941406 30.042969 75.613281 30.042969 76.4375 C 30.042969 77.265625 30.714844 77.9375 31.539062 77.9375 Z M 104.917969 62.960938 L 85.449219 62.960938 L 85.449219 75.875 L 97.304688 75.875 C 99.324219 75.875 101.265625 75.074219 102.6875 73.648438 C 104.117188 72.21875 104.917969 70.28125 104.917969 68.265625 Z M 3.085938 62.960938 L 3.085938 68.265625 C 3.085938 70.28125 3.886719 72.21875 5.316406 73.648438 C 6.738281 75.074219 8.679688 75.875 10.699219 75.875 L 22.554688 75.875 L 22.554688 62.960938 Z M 31.539062 70.449219 L 76.464844 70.449219 C 77.289062 70.449219 77.964844 69.777344 77.964844 68.949219 C 77.964844 68.125 77.289062 67.453125 76.464844 67.453125 L 31.539062 67.453125 C 30.714844 67.453125 30.042969 68.125 30.042969 68.949219 C 30.042969 69.777344 30.714844 70.449219 31.539062 70.449219 Z M 104.917969 59.964844 L 104.917969 39.6875 C 104.917969 37.667969 104.117188 35.730469 102.6875 34.304688 C 101.265625 32.875 99.324219 32.074219 97.304688 32.074219 L 10.699219 32.074219 C 8.679688 32.074219 6.738281 32.875 5.316406 34.304688 C 3.886719 35.730469 3.085938 37.667969 3.085938 39.6875 L 3.085938 59.964844 Z M 76.464844 40.496094 L 83.953125 40.496094 C 84.777344 40.496094 85.449219 39.828125 85.449219 39 C 85.449219 38.171875 84.777344 37.503906 83.953125 37.503906 L 76.464844 37.503906 C 75.640625 37.503906 74.96875 38.171875 74.96875 39 C 74.96875 39.828125 75.640625 40.496094 76.464844 40.496094 Z M 36.316406 10.546875 L 36.316406 19.53125 C 36.316406 20.359375 35.644531 21.027344 34.820312 21.027344 L 25.550781 21.027344 L 25.550781 29.078125 L 82.457031 29.078125 L 82.457031 10.546875 Z M 33.320312 12.664062 L 27.945312 18.035156 L 33.320312 18.035156 Z M 33.320312 12.664062 "
+                fill-opacity="1" fill-rule="evenodd" />
+            </g>
+            <g clip-path="url(#51f0ff38b5)">
+              <path fill="#ffffff"
+                d="M 27.347656 64.796875 L 80.027344 64.796875 L 80.027344 95.375 L 27.347656 95.375 Z M 27.347656 64.796875 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#b1eec9eaf7)">
+              <path fill="#9b70f1"
+                d="M 30.886719 65.902344 L 50.636719 65.902344 L 50.636719 72.878906 L 30.886719 72.878906 Z M 30.886719 65.902344 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#fb5ef80237)">
+              <path fill="#9b70f1"
+                d="M 30.886719 76.574219 L 50.636719 76.574219 L 50.636719 83.550781 L 30.886719 83.550781 Z M 30.886719 76.574219 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#e39082990f)">
+              <path fill="#9b70f1"
+                d="M 30.886719 87.429688 L 50.636719 87.429688 L 50.636719 94.40625 L 30.886719 94.40625 Z M 30.886719 87.429688 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#671b102d5d)">
+              <path fill="#9b70f1"
+                d="M 57.367188 65.902344 L 77.121094 65.902344 L 77.121094 72.878906 L 57.367188 72.878906 Z M 57.367188 65.902344 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#d79decbbae)">
+              <path fill="#9b70f1"
+                d="M 57.367188 76.574219 L 77.121094 76.574219 L 77.121094 83.550781 L 57.367188 83.550781 Z M 57.367188 76.574219 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+            <g clip-path="url(#6f8797775c)">
+              <path fill="#9b70f1"
+                d="M 57.367188 87.429688 L 77.121094 87.429688 L 77.121094 94.40625 L 57.367188 94.40625 Z M 57.367188 87.429688 "
+                fill-opacity="1" fill-rule="nonzero" />
+            </g>
+          </svg>
+        </div>
+
+        <sp-button style="width: 100%;" id="continue" size="m"
           onclick="this.dispatchEvent(new Event('close', { bubbles: true, composed: true }));">
-          Continue
-        </sp-button> -->
-      </div>
-      <div id="secondPage" style="display: none;">
-        <!-- TODO -->
-      </div>
-      <div id="thirdPage" style="display: none;margin: 24px;">
-        <p class="spectrum-Body spectrum-Heading--sizeS"><strong>Select the label design page or pages that you want to
-            print out</strong></p>
-        <sp-button id="choosePages" size="m" style="width: 100%; margin-top: 24px;">Choose page(s)</sp-button>
 
-
-
+        </sp-button>
       </div>
+
       <div id="fourthPage" style="display: none;margin: 24px;">
-        <p class="spectrum-Body spectrum-Heading--sizeS"><strong>Select the label design page or pages that you want to
-                print out</strong></p>
-    
-        <div style="display: flex; flex-direction: row;">
-            <sp-radio-group id="rangeSelect" name="example" horizontal>
-                <sp-radio emphasized value="entireDocument">Entire Document</sp-radio>
-                <sp-radio emphasized value="currentPage">Current Page</sp-radio>
-            </sp-radio-group>
-        </div>
-        <sp-picker label="Page selection" value="entireDocument" id="rangeSelect" style="width: 100%;">
-          <sp-menu-item value="entireDocument">Entire Document</sp-menu-item>
-          <sp-menu-item value="currentPage">Current Page</sp-menu-item>
+        <p class="spectrum-Body spectrum-Heading--sizeM"></p>
+        <sp-field-label id="radioButtonTitle" style="margin-top: 24px" ></sp-field-label>
+        <sp-radio-group id="rangeSelect" name="example" horizontal>
+
+          <sp-radio style="margin-right: 25px;" id="radio1" emphasized value="entireDocument"></sp-radio>
+          <sp-radio id="radio2" emphasized value="currentPage" checked></sp-radio>
+        </sp-radio-group>
+        
+        <sp-field-label id="dropdownTitle" style="margin-top: 16px;"></sp-field-label>
+        
+        <sp-picker label="File format" value="png" id="formatSelect" style="width: 100%;">
+          <sp-menu-item id="dropdown1" value="png" selected></sp-menu-item>
+          <sp-menu-item id="dropdown2" value="jpg"></sp-menu-item>
         </sp-picker>
-        <sp-picker label="File format" value="entireDocument" id="exportType" style="width: 100%;">
-          
-          <sp-menu-item value="pngFormat">PNG (Best for images)</sp-menu-item>
-          <sp-menu-item value="jpgFormat">JPG (Best for small file sizes)</sp-menu-item>
-        </sp-picker>
-        <sp-button size="m" id="export" style="width:100%;margin-top: 24px;">Select</sp-button>
-    </div>
-    
+        <sp-button size="m" id="export" style="width:100%;margin-top: 24px;">
+        </sp-button>
+
+      </div>
+
+
+      
       <div id="generatePage" style="display:none;margin:24px">
-        <div style="width:100%;">
+         <div style="width:100%;">
 
           <div id="image-container"></div>
 
         </div>
-        <sp-button size="m" style="margin-top: 24px;width: 100%;" id="generatePrintout">Generate Printout</sp-button>
-        <sp-button size="m" variant="secondary" id="back1" style="margin-top: 8px;width: 100%;">Back</sp-button>
+        <sp-button size="m" style="margin-top: 24px;width: 100%;" id="generatePrintout"></sp-button>
+        <sp-button size="m" variant="secondary" id="back1" style="margin-top: 8px;width: 100%;"></sp-button>
 
 
       </div>
     </div>
+
   </sp-theme>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-  <script src="https://jspm.dev/@spectrum-web-components/bundle/elements.js" type="module" async></script>
-  <script src="../node_modules/@spectrum-web-components/theme/express/themes.js"></script>
-  <script type="module" src="index.js"></script>
+  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18">
+    <title>InfoMedium</title>
+    <defs>
+      <symbol id="myInfoIcon" viewBox="0 0 18 18">
+        <rect id="ToDelete" fill="#ff13dc" opacity="0" width="18" height="18" />
+        <path
+          d="M9,1a8,8,0,1,0,8,8A8,8,0,0,0,9,1ZM8.85,3.15a1.359,1.359,0,0,1,1.43109,1.28286q.00352.06452.00091.12914A1.332,1.332,0,0,1,8.85,5.994,1.353,1.353,0,0,1,7.418,4.561,1.359,1.359,0,0,1,8.72191,3.14905Q8.78595,3.14652,8.85,3.15ZM11,13.5a.5.5,0,0,1-.5.5h-3a.5.5,0,0,1-.5-.5v-1a.5.5,0,0,1,.5-.5H8V9H7.5A.5.5,0,0,1,7,8.5v-1A.5.5,0,0,1,7.5,7h2a.5.5,0,0,1,.5.5V12h.5a.5.5,0,0,1,.5.5Z" />
+      </symbol>
+    </defs>
+  </svg>
+
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 18 18" width="18">
+    <title>S Alert 18 N</title>
+    <defs>
+      <symbol id="alert" viewBox="0 0 18 18">
+
+        <rect fill="#ff13dc" opacity="0" width="18" height="18" />
+        <path class="fill"
+          d="M8.5635,1.2895.2,16.256A.5.5,0,0,0,.636,17H17.364a.5.5,0,0,0,.436-.744L9.4365,1.2895a.5.5,0,0,0-.873,0ZM10,14.75a.25.25,0,0,1-.25.25H8.25A.25.25,0,0,1,8,14.75v-1.5A.25.25,0,0,1,8.25,13h1.5a.25.25,0,0,1,.25.25Zm0-3a.25.25,0,0,1-.25.25H8.25A.25.25,0,0,1,8,11.75v-6a.25.25,0,0,1,.25-.25h1.5a.25.25,0,0,1,.25.25Z" />
+    </defs>
+  </svg>
 
 </body>
 
 
 </html>
+
+
+<!--  Tried to use the web component dialog within the frame
+
+        <div id="openPrintingDialogDiv" style="display: none;">
+        <form id="specifyLayout" method="post" target="_blank">
+          <input type="hidden" name="frm" value="express">
+          <input type="hidden" id="imageUrlId" name="imageUrl" >
+        </form>
+        <sp-alert-dialog variant="information">
+          <h2 slot="heading">Unable to share</h2>
+          An error occured while sharing your project. Please verify the email address
+          and try again.
+          <sp-button slot="button" id="confirmButton" variant="primary" treatment="outline"    >
+            Continue
+          </sp-button>
+        </sp-alert-dialog>
+        <script>
+
+          document.getElementById('confirmButton').addEventListener('click', submitSpecifyLayout);
+
+          function submitSpecifyLayout() {
+
+            document.querySelector('#openPrintingDialogDiv').style.display = 'none';
+            document.querySelector('#generatePage').style.display = 'block';
+            document.getElementById('specifyLayout').submit();
+          }
+        </script>
+      </div> -->
