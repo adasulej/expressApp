@@ -6,7 +6,9 @@ import '@spectrum-css/icon';
 
 // Themes and scales
 
+
 import '@spectrum-web-components/theme/sp-theme.js';
+import '@spectrum-web-components/theme/src/themes.js';
 import '@spectrum-web-components/theme/express/theme-darkest.js';
 import '@spectrum-web-components/theme/express/theme-dark.js';
 import '@spectrum-web-components/theme/express/theme-light.js';
